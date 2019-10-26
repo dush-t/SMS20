@@ -11,7 +11,7 @@ const marketSchema = new mongoose.Model({
     },
     priceRateChangeFactor: {
         type: Number,
-        default: 0.01
+        default: 1.01
     },
     is_active: {
         type: Boolean,

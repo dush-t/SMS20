@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const StockTransaction = require('./stockTransaction');
 
 const stockSchema = new mongoose.Schema({
     name: {
@@ -38,6 +39,14 @@ const stockSchema = new mongoose.Schema({
         ref: 'Market'
     }
 });
+
+stockSchema.methods.buy = async function (user, units) {
+    // Change price of stock by market trends and shit
+    StockTransaction.generateAndPerform(this, user, units);
+    this.populate('market').execPopulate();
+    this.pricePerUnit  = this.pricePerUnit * units * this.market.priceRateChangeFactor
+    await this.save()
+}
 
 const Stock = mongoose.model('Stock', stockSchema);
 
