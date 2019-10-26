@@ -41,10 +41,16 @@ const stockSchema = new mongoose.Schema({
 });
 
 stockSchema.methods.buy = async function (user, units) {
-    // Change price of stock by market trends and shit
-    StockTransaction.generateAndPerform(this, user, units);
+    StockTransaction.generateAndPerform(this, user, units, 1);
     this.populate('market').execPopulate();
-    this.pricePerUnit  = this.pricePerUnit * units * this.market.priceRateChangeFactor
+    this.pricePerUnit  = this.pricePerUnit * units * (1 + this.market.priceRateChangeFactor)
+    await this.save()
+}
+
+stockSchema.methods.sell = async function (user, units) {
+    StockTransaction.generateAndPerform(this, user, units, -1);
+    this.populate('market').execPopulate();
+    this.pricePerUnit = this.pricePerUnit * units * (1 - this.market.priceRateChangeFactor)
     await this.save()
 }
 
