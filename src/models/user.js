@@ -32,6 +32,11 @@ const userSchema = new mongoose.Schema({
             
         }
     },
+    balance: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     stocksOwned: [{
         stock: {
             type: mongoose.Schema.Types.ObjectId,
