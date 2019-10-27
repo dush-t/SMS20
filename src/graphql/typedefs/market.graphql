@@ -1,0 +1,13 @@
+type Market {
+    id: String
+    name: String
+    exchangeRate: String
+    priceRateChangeFactor: String
+    is_active: String
+    stocks: [Stock]
+}
+
+type Query {
+    market(id: String, name: String): Market
+    markets: [Market]
+}

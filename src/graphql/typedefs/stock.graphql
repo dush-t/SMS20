@@ -1,0 +1,16 @@
+type Stock {
+    _id: String!
+    name: String!
+    shortName: String
+    pricePerUnit: Float
+    initialPricePerUnit: Float
+    trend: Int
+    availableUnits: Int
+    isActive: Boolean
+    market: Market
+}
+
+type Query {
+    stock(_id: String, shortName: String): Stock
+    stocks(market: String): [Stock]
+}

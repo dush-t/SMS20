@@ -4,11 +4,11 @@ const Market = require('../models/market');
 
 var { buildSchema } = require('graphql');// GraphQL schema
 
-
+// Maybe use Apollo-server for GraphQL instead?
 var schema = buildSchema(`
     type Query {
         market(id: String!): Market
-        markets: [Market]
+        markets(id: String, name: String): [Market]
     },
     type Market {
         id: String
@@ -31,7 +31,7 @@ var schema = buildSchema(`
 `);
 
 const getMarkets = async (args) => {
-    const markets = await Market.find({})
+    const markets = await Market.find(args)
     // console.log(markets)
     return markets 
 }
@@ -39,16 +39,14 @@ const getMarkets = async (args) => {
 const getMarket = async (args) => {
     _id = args.id;
     const market = await Market.findById(_id)
-    console.log(market)
+    // console.log(market)
     return market
 }
 
-
-// Root resolver
 const root = {
     markets: getMarkets,
     market: getMarket
-};// Create an express server and a GraphQL endpoint
+};
 
 const marketRouter = express_graphql({
     schema: schema,

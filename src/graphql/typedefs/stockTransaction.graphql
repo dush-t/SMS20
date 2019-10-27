@@ -1,0 +1,13 @@
+type StockTransaction {
+    _id: String
+    stock: Stock!
+    user: User!
+    units: Int
+    costPerUnit: Float
+    type: Int
+}
+
+type Query {
+    stockTransaction(id: String!): StockTransaction
+    stockTransactions(user: String!, stock: String, type: Int): [StockTransaction]
+}

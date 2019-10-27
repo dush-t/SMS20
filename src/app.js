@@ -1,6 +1,10 @@
 const express = require('express');
-const AdminBro = require('admin-bro')
-const AdminBroExpressjs = require('admin-bro-expressjs')
+const bodyParser = require('body-parser');
+const AdminBro = require('admin-bro');
+const AdminBroExpressjs = require('admin-bro-expressjs');
+const { makeExecutableSchema } = require('graphql-tools');
+// const { graphqlExpress } = require('apollo-server-express');
+const { ApolloServer, gql } = require('apollo-server-express');
 
 require('./db/mongoose');
 
@@ -10,6 +14,11 @@ const Stock = require('./models/stock');
 const StockTransaction = require('./models/stockTransaction');
 
 const marketRouter = require('./routers/graphql');
+
+// For GraphQL
+const typeDefs = require('./graphql/typedefs');
+const resolvers = require('./graphql/resolvers');
+
 
 const app = express();
 
@@ -27,29 +36,20 @@ const loggerMiddleware = (req, res, next) => {
     next();
 }
 
-var express_graphql = require('express-graphql');
-var { buildSchema } = require('graphql');// GraphQL schema
-var schema = buildSchema(`
-    type Query {
-        message: String
-    }
-`);// Root resolver
-var root = {
-    message: () => 'Hello World!'
-};// Create an express server and a GraphQL endpoint
-app.use('/graphql', express_graphql({
-    schema: schema,
-    rootValue: root,
-    graphiql: true
-}));
+// const graphSchema = makeExecutableSchema({typeDefs, resolvers});
+// app.use('/graphql', bodyParser.json(), graphqlExpress({ schema: graphSchema }));
 
-app.use('/graph-market', marketRouter)
+const server = new ApolloServer({typeDefs, resolvers});
+
+// app.use('/graph-market', marketRouter)
 
 const router = AdminBroExpressjs.buildRouter(adminBro)
 app.use(adminBro.options.rootPath, router)
-app.use(marketRouter)
+// app.use(marketRouter)
 
 app.use(express.json())
 app.use(loggerMiddleware);
 
+server.graphqlPath = '/data'
+server.applyMiddleware({ app })
 module.exports = app;
