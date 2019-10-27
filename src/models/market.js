@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const marketSchema = new mongoose.Model({
+const marketSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
