@@ -1,12 +1,13 @@
 type User {
+    _id: String!
     name: String
     email: String
     bits_id: String
     balance: Float
-    # stocksOwned: [StockOwned]
+    stocksOwned: [StockOwned]
     stockTransactions: [StockTransaction]
 }
 
 type Query {
-    user(id: String!): User
+    user(_id: String!): User
 }
