@@ -13,8 +13,6 @@ const Market = require('./models/market');
 const Stock = require('./models/stock');
 const StockTransaction = require('./models/stockTransaction');
 
-const marketRouter = require('./routers/graphql');
-
 // For GraphQL
 const typeDefs = require('./graphql/typedefs');
 const resolvers = require('./graphql/resolvers');

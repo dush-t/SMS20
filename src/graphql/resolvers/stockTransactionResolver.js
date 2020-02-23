@@ -4,7 +4,7 @@ const Stock = require('../../models/stock');
 
 const resolver = {
     Query: {
-        async StockTransaction(_, args) {
+        async stockTransaction(_, args) {
             const stockTransaction = await StockTransaction.findById(args._id).populate({
                 path: 'stock',
                 model: 'Stock'
