@@ -30,40 +30,20 @@ const adminBro = new AdminBro({
 })
 
 // IEX Api
-const quote = async (sym) => {
+const quote = async (stock) => {
+    sym = stock.shortName
     const quoteData = await iex.quote(sym);
     qd = quoteData
-
-    const market = await Market.findOne({ name: qd.primaryExchange })
-
-    if (!market) {
-        await new Market({ name: qd.primaryExchange }).save()
-    }
-
-    const stock = await Stock.findOne({ shortName: qd.symbol })
-
-    if (!stock) {
-        console.log(stock)
-        await new Stock({
-            market: market.id,
-            shortName: qd.symbol,
-            name: qd.companyName,
-            pricePerUnit: qd.latestPrice,
-            initialPricePerUnit: qd.latestPrice,
-        }).save()
-    } else {
-        stock.pricePerUnit = qd.latestPrice
-    }
-
+    stock.pricePerUnit = qd.latestPrice
+    stock.save()
     console.log("Working!!")
-
 }
 
 
 const fetch = async () => {
     const stocks = await Stock.find({})
     for (let i = 0; i < stocks.length; i++) {
-        await quote(stocks[i].shortName)
+        await quote(stocks[i])
     }
 }
 
@@ -75,7 +55,7 @@ const noDelaySetInterval = (func, interval) => {
 }
 
 // Interval(in ms) in which the stock market data is syncronised with the real data.
-interval = 60 * 1000
+const interval = process.env.INTERVAL || 60 * 60 * 1000
 
 noDelaySetInterval(fetch, interval)
 
