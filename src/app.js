@@ -1,7 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const iex = require('iexcloud_api_wrapper')
 const AdminBro = require('admin-bro');
 const AdminBroExpressjs = require('admin-bro-expressjs');
+
 const { makeExecutableSchema } = require('graphql-tools');
 // const { graphqlExpress } = require('apollo-server-express');
 const { ApolloServer, gql } = require('apollo-server-express');
@@ -27,6 +29,36 @@ const adminBro = new AdminBro({
     rootPath: '/admin',
 })
 
+// IEX Api
+const quote = async (stock) => {
+    sym = stock.shortName
+    const quoteData = await iex.quote(sym);
+    qd = quoteData
+    stock.pricePerUnit = qd.latestPrice
+    stock.save()
+    console.log("Working!!")
+}
+
+
+const fetch = async () => {
+    const stocks = await Stock.find({})
+    for (let i = 0; i < stocks.length; i++) {
+        await quote(stocks[i])
+    }
+}
+
+// This has a slightly different form setInterval function as it runs instantaneously for the first time
+// and then runs after the defined period of time
+const noDelaySetInterval = (func, interval) => {
+    func()
+    return setInterval(func, interval)
+}
+
+// Interval(in ms) in which the stock market data is syncronised with the real data.
+const interval = process.env.INTERVAL || 60 * 60 * 1000
+
+noDelaySetInterval(fetch, interval)
+
 
 // log all requests to terminal, just like django.
 const loggerMiddleware = (req, res, next) => {
@@ -37,7 +69,7 @@ const loggerMiddleware = (req, res, next) => {
 // const graphSchema = makeExecutableSchema({typeDefs, resolvers});
 // app.use('/graphql', bodyParser.json(), graphqlExpress({ schema: graphSchema }));
 
-const server = new ApolloServer({typeDefs, resolvers});
+const server = new ApolloServer({ typeDefs, resolvers });
 
 // app.use('/graph-market', marketRouter)
 
