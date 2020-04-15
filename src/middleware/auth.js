@@ -1,16 +1,11 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-try {
-    const config = require('../../config/config') || undefined;
-} catch (e) {
-    console.log(e);
-}
 
 
 const auth = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || config.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'lolmao12345');
         const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
 
         if (!user) {
@@ -19,9 +14,13 @@ const auth = async (req, res, next) => {
 
         req.user = user;
         req.token = token;
+        req.authenticated = true
         next();
     } catch (e) {
-        res.status(401).send({ error: 'Please authenticate first.' })
+        req.user = null
+        req.authenticated = false
+        console.log('Unauthenticated Request')
+        next()
     }
 }
 

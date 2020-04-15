@@ -1,5 +1,5 @@
 type Market {
-    id: String
+    _id: String
     name: String
     exchangeRate: String
     priceRateChangeFactor: String
@@ -8,6 +8,6 @@ type Market {
 }
 
 type Query {
-    market(id: String, name: String): Market
+    market(_id: String, name: String): Market
     markets: [Market]
 }

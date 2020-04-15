@@ -1,33 +1,30 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const iex = require('iexcloud_api_wrapper')
-const AdminBro = require('admin-bro');
-const AdminBroExpressjs = require('admin-bro-expressjs');
+const express = require('express')
+const bodyParser = require('body-parser')
+const AdminBro = require('admin-bro')
+const AdminBroExpressjs = require('admin-bro-expressjs')
+const { ApolloServer, gql } = require('apollo-server-express')
 
-const { makeExecutableSchema } = require('graphql-tools');
-// const { graphqlExpress } = require('apollo-server-express');
-const { ApolloServer, gql } = require('apollo-server-express');
+const buildDataloaders = require('./graphql/dataloaders')
 
-require('./db/mongoose');
+// Initialize database connection
+require('./db/mongoose')
 
-const User = require('./models/user');
-const Market = require('./models/market');
-const Stock = require('./models/stock');
-const StockTransaction = require('./models/stockTransaction');
+const User = require('./models/user')
+const Market = require('./models/market')
+const Stock = require('./models/stock')
+const StockTransaction = require('./models/stockTransaction')
 
-// For GraphQL
-const typeDefs = require('./graphql/typedefs');
-const resolvers = require('./graphql/resolvers');
-
+const auth = require('./middleware/auth')
 
 const app = express();
 
+// Setup Admin Panel
 AdminBro.registerAdapter(require('admin-bro-mongoose'))
-
 const adminBro = new AdminBro({
     resources: [User, Market, Stock, StockTransaction],
     rootPath: '/admin',
 })
+const router = AdminBroExpressjs.buildRouter(adminBro)
 
 // IEX Api
 const quote = async (stock) => {
@@ -60,25 +57,35 @@ const interval = process.env.INTERVAL || 60 * 60 * 1000
 noDelaySetInterval(fetch, interval)
 
 
-// log all requests to terminal, just like django.
+// Log requests to terminal
 const loggerMiddleware = (req, res, next) => {
     console.log(req.method + ' ' + req.path);
     next();
 }
 
-// const graphSchema = makeExecutableSchema({typeDefs, resolvers});
-// app.use('/graphql', bodyParser.json(), graphqlExpress({ schema: graphSchema }));
+// For GraphQL
+const typeDefs = require('./graphql/typedefs')
+const resolvers = require('./graphql/resolvers')
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    introspection: true,
+    playground: true,
+    context: ({ req }) => {
+        return {
+            user: req.user,
+            authenticated: req.authenticated,
+            dataloaders: buildDataloaders()
+        }
+    }
+});
 
-// app.use('/graph-market', marketRouter)
 
-const router = AdminBroExpressjs.buildRouter(adminBro)
 app.use(adminBro.options.rootPath, router)
-// app.use(marketRouter)
-
 app.use(express.json())
 app.use(loggerMiddleware);
+app.use(auth);  // Doing stuff Django style
 
 server.graphqlPath = '/data'
 server.applyMiddleware({ app })

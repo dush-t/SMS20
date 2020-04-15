@@ -4,9 +4,14 @@ const User = require('../../models/user');
 const resolver = {
     Query: {
         async stocksOwned(parent, args) {
-            // const user = await User.findById(parent._id).populate('stocksOwned.stock');
             return parent.stocksOwned;
         } 
+    },
+
+    StockOwned: {
+        async stock(parent, _, {dataloaders: {stockLoader}}) {
+            return await stockLoader.load(parent.stock)
+        }
     }
 }
 

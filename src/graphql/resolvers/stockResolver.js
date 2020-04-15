@@ -12,15 +12,14 @@ const schema = {
         },
 
         async stocks(parent, args) {
-            const stocks = await Stock.find(args)
+            const stocks = await Stock.find({...args})
             return stocks
         }
     },
 
     Stock: {
-        async market(parent) {
-            const market = await Market.findById(parent.market);
-            return market
+        async market(parent, _, {dataloaders: {marketLoader}}) {
+            return await marketLoader.load(parent.market)
         }
     }
 }
