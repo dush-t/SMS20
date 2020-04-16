@@ -2,7 +2,11 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const AdminBro = require('admin-bro')
 const AdminBroExpressjs = require('admin-bro-expressjs')
+const AdminBroMongoose = require('admin-bro-mongoose')
 const { ApolloServer, gql } = require('apollo-server-express')
+
+// To configure IEX Api
+const iex = require('iexcloud_api_wrapper')
 
 const buildDataloaders = require('./graphql/dataloaders')
 
@@ -12,16 +16,19 @@ require('./db/mongoose')
 const User = require('./models/user')
 const Market = require('./models/market')
 const Stock = require('./models/stock')
+const Leaderboard = require("./models/leaderboard")
 const StockTransaction = require('./models/stockTransaction')
 
 const auth = require('./middleware/auth')
 
+const quickSort = require("./utils/quicksort")
+
 const app = express();
 
 // Setup Admin Panel
-AdminBro.registerAdapter(require('admin-bro-mongoose'))
+AdminBro.registerAdapter(AdminBroMongoose)
 const adminBro = new AdminBro({
-    resources: [User, Market, Stock, StockTransaction],
+    resources: [User, Market, Stock, StockTransaction, Leaderboard],
     rootPath: '/admin',
 })
 const router = AdminBroExpressjs.buildRouter(adminBro)
@@ -56,6 +63,32 @@ const interval = process.env.INTERVAL || 60 * 60 * 1000
 
 noDelaySetInterval(fetch, interval)
 
+
+// Populate Leaderboard
+const leaderboard = () => {
+    User.find({}).then(async (users) => {
+        for (let i = 0; i < users.length; i++) {
+            let stockPrice = 0;
+            for (let j = 0; j < users[i].stocksOwned.length; j++) {
+                stock = users[i].stocksOwned[j]
+                stockPrice = stockPrice + stock.units * stock.avgPricePerUnit
+            }
+            users[i].netWorth = stockPrice + users[i].balance
+        }
+        quickSort(users, 0, users.length - 1)
+        const leaderboard = await Leaderboard.findOneAndUpdate({ name: "Main" }, { leaderboard: users })
+        console.log(leaderboard)
+        if (!leaderboard) {
+            let leaderboard = new Leaderboard({ name: "Main" })
+            leaderboard.leaderboard = users
+            await leaderboard.save()
+        }
+    }).catch((e) => {
+        console.log("Unable to query Database: ", e)
+    })
+}
+
+noDelaySetInterval(leaderboard, interval)
 
 // Log requests to terminal
 const loggerMiddleware = (req, res, next) => {
