@@ -29,7 +29,6 @@ leaderboardSchema.statics.update = async () => {
         })
         quickSort(users, 0, users.length - 1)
         const leaderboard = await Leaderboard.findOneAndUpdate({}, { leaderboard: users.reverse() })
-        console.log(leaderboard)
         if (!leaderboard) {
             let leaderboard = new Leaderboard()
             leaderboard.leaderboard = users
