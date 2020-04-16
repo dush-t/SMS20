@@ -10,19 +10,24 @@ const resolver = {
         },
 
         async stockTransactions(_, args) {
-            const stockTransactions = await StockTransaction.find({...args})
+            const stockTransactions = await StockTransaction.find({ ...args })
             return stockTransactions;
         }
     },
     StockTransaction: {
-        async stock(parent, _, {dataloaders: {stockLoader}}) {
+        async stock(parent, _, { dataloaders: { stockLoader } }) {
             return await stockLoader.load(parent.stock)
         },
 
-        async user(parent, _, {dataloaders: {userLoader}}) {
+        async user(parent, _, { dataloaders: { userLoader } }) {
             return await userLoader.load(parent.user)
         }
-    }
+    },
+    // Mutation: {
+    //     buy: (args) => {
+    //         console.log(args)
+    //     }
+    // }
 }
 
 module.exports = resolver;

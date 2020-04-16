@@ -11,3 +11,8 @@ type User {
 type Query {
     user(_id: String!): User
 }
+
+type Mutation{
+    register(name:String!,password:String!,confirmPassword:String!,bits_id:String!,email:String!):User!
+    login(email:String!,password:String!):User!
+}

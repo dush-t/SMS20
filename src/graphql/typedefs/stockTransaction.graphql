@@ -11,3 +11,4 @@ type Query {
     stockTransaction(_id: String!): StockTransaction
     stockTransactions(user: String!, stock: String, type: Int): [StockTransaction]
 }
+

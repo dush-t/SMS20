@@ -60,6 +60,7 @@ const noDelaySetInterval = async (func, interval) => {
 // Interval(in ms) in which the stock market data is syncronised with the real data.
 const interval = process.env.INTERVAL || 60 * 60 * 1000
 
+
 noDelaySetInterval(fetch, interval)
 
 noDelaySetInterval(Leaderboard.update, interval)
