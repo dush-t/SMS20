@@ -40,7 +40,6 @@ const quote = async (stock) => {
     qd = quoteData
     stock.pricePerUnit = qd.latestPrice
     stock.save()
-    console.log("Working!!")
 }
 
 
@@ -63,32 +62,7 @@ const interval = process.env.INTERVAL || 60 * 60 * 1000
 
 noDelaySetInterval(fetch, interval)
 
-
-// Populate Leaderboard
-const leaderboard = () => {
-    User.find({}).then(async (users) => {
-        for (let i = 0; i < users.length; i++) {
-            let stockPrice = 0;
-            for (let j = 0; j < users[i].stocksOwned.length; j++) {
-                stock = users[i].stocksOwned[j]
-                stockPrice = stockPrice + stock.units * stock.avgPricePerUnit
-            }
-            users[i].netWorth = stockPrice + users[i].balance
-        }
-        quickSort(users, 0, users.length - 1)
-        const leaderboard = await Leaderboard.findOneAndUpdate({ name: "Main" }, { leaderboard: users })
-        console.log(leaderboard)
-        if (!leaderboard) {
-            let leaderboard = new Leaderboard({ name: "Main" })
-            leaderboard.leaderboard = users
-            await leaderboard.save()
-        }
-    }).catch((e) => {
-        console.log("Unable to query Database: ", e)
-    })
-}
-
-noDelaySetInterval(leaderboard, interval)
+noDelaySetInterval(Leaderboard.update, interval)
 
 // Log requests to terminal
 const loggerMiddleware = (req, res, next) => {
