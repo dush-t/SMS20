@@ -1,0 +1,8 @@
+type Leaderboard {
+    _id:String!
+    leaderboard: [User]!
+}
+
+type Query{
+    leaderboard:[Leaderboard]
+}

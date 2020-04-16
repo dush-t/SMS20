@@ -15,9 +15,9 @@ const schema = {
 
     Market: {
         async stocks(parent) {
-            const stocks = await Stock.find({market: parent._id});
+            const stocks = await Stock.find({ market: parent._id });
             return stocks;
-        } 
+        }
     }
 }
 

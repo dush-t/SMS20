@@ -22,7 +22,6 @@ leaderboardSchema.statics.update = async () => {
         users.forEach(user => {
             let stockPrice = 0
             user.stocksOwned.forEach(stock => {
-                console.log(stock)
                 stockPrice = stockPrice + stock.units * stock.stock.pricePerUnit
             })
             user.netWorth = stockPrice + user.balance

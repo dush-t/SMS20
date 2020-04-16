@@ -52,7 +52,7 @@ const fetch = async () => {
 
 // This has a slightly different form setInterval function as it runs instantaneously for the first time
 // and then runs after the defined period of time
-const noDelaySetInterval = (func, interval) => {
+const noDelaySetInterval = async (func, interval) => {
     func()
     return setInterval(func, interval)
 }
