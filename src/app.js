@@ -4,9 +4,7 @@ const AdminBro = require('admin-bro')
 const AdminBroExpressjs = require('admin-bro-expressjs')
 const AdminBroMongoose = require('admin-bro-mongoose')
 const { ApolloServer, gql } = require('apollo-server-express')
-
-// To configure IEX Api
-const iex = require('iexcloud_api_wrapper')
+const { fetch, interval, noDelaySetInterval } = require("./utils/iexApiConfig")
 
 const buildDataloaders = require('./graphql/dataloaders')
 
@@ -33,37 +31,10 @@ const adminBro = new AdminBro({
 })
 const router = AdminBroExpressjs.buildRouter(adminBro)
 
-// IEX Api
-const quote = async (stock) => {
-    sym = stock.shortName
-    const quoteData = await iex.quote(sym);
-    qd = quoteData
-    stock.pricePerUnit = qd.latestPrice
-    stock.save()
-}
-
-
-const fetch = async () => {
-    const stocks = await Stock.find({})
-    for (let i = 0; i < stocks.length; i++) {
-        await quote(stocks[i])
-    }
-}
-
-// This has a slightly different form setInterval function as it runs instantaneously for the first time
-// and then runs after the defined period of time
-const noDelaySetInterval = async (func, interval) => {
-    func()
-    return setInterval(func, interval)
-}
-
-// Interval(in ms) in which the stock market data is syncronised with the real data.
-const interval = process.env.INTERVAL || 60 * 60 * 1000
-
-
-noDelaySetInterval(fetch, interval)
-
-noDelaySetInterval(Leaderboard.update, interval)
+    ; (async function () {
+        await noDelaySetInterval(fetch, interval)
+        await noDelaySetInterval(Leaderboard.update, interval)
+    })()
 
 // Log requests to terminal
 const loggerMiddleware = (req, res, next) => {
