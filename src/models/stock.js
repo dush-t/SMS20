@@ -53,9 +53,10 @@ const stockSchema = new mongoose.Schema({
 stockSchema.index({ category: 1 })
 
 stockSchema.methods.buy = async function (user, units) {
+    const stock = this
     if (user.balance < this.pricePerUnit * units) {
         throw new Error('Insufficient Balance!')
-    } 
+    }
 
     let stockIsOwned = false
     user.stocksOwned = user.stocksOwned.map((stockOwned) => {
@@ -66,7 +67,7 @@ stockSchema.methods.buy = async function (user, units) {
         stockIsOwned = true
         const newUnits = stockOwned.units + units;
         const newAvgPrice = (stockOwned.avgPricePerUnit * stockOwned.units + this.pricePerUnit * units) / newUnits
-        return { stock: stockOwned.stock, units: newUnits, avgPricePerUnit: newAvgPrice}
+        return { stock: stockOwned.stock, units: newUnits, avgPricePerUnit: newAvgPrice }
     })
 
     if (!stockIsOwned) {
@@ -91,10 +92,11 @@ stockSchema.methods.buy = async function (user, units) {
 }
 
 stockSchema.methods.sell = async function (user, units) {
+    const stock = this
     let stockIsOwned = false
     let stockSellout = false
     let selloutStock = ''
-    
+
     user.stocksOwned = user.stocksOwned.map((stockOwned, i) => {
         if (!stockOwned.stock.equals(this._id)) {
             return stockOwned

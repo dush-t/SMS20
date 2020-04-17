@@ -6,6 +6,7 @@ type User {
     balance: Float
     stocksOwned: [StockOwned]
     stockTransactions: [StockTransaction]
+    token:String
 }
 
 type Query {

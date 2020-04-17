@@ -30,7 +30,7 @@ const resolver = {
         },
         async login(_, { email, password }) {
             const user = await User.findByCredentials(email, password)
-            await user.generateAuthToken()
+            user.token = await user.generateAuthToken()
             return user
         }
     }
