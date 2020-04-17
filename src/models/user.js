@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
         trim: true,
         uppercase: true,
         validate(value) {
-            
+
         }
     },
     balance: {
@@ -85,14 +85,14 @@ userSchema.methods.toJSON = function () {
     delete userObject.password;
     delete userObject.tokens;
     delete userObject.avatar;  // not sending the image because the data is too
-                               // large and slows down the json request.
+    // large and slows down the json request.
     return userObject;
 }
 
 
 userSchema.methods.generateAuthToken = async function () {
     const user = this;
-    const token = jwt.sign({_id: user._id.toString() }, process.env.JWT_SECRET || 'abcd1234');
+    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET || 'abcd1234');
     user.tokens = user.tokens.concat({ token: token });
     await user.save();
 
@@ -102,19 +102,18 @@ userSchema.methods.generateAuthToken = async function () {
 
 
 userSchema.statics.findByCredentials = async (email, password) => {
-    
-    const user = await User.findOne({ email: email});
+
+    const user = await User.findOne({ email: email });
     if (!user) {
         throw new Error('Unable to log in');
     }
-    
+
     const isMatch = await bcrypt.compare(password, user.password);
-    if(!isMatch) {
+    if (!isMatch) {
         throw new Error('Unable to log in');
     }
     return user;
 }
-
 
 
 // Hash password before saving.

@@ -22,12 +22,7 @@ const resolver = {
         async user(parent, _, { dataloaders: { userLoader } }) {
             return await userLoader.load(parent.user)
         }
-    },
-    // Mutation: {
-    //     buy: (args) => {
-    //         console.log(args)
-    //     }
-    // }
+    }
 }
 
 module.exports = resolver;

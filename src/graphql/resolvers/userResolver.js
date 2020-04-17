@@ -22,30 +22,16 @@ const resolver = {
     },
 
     Mutation: {
-        async register(_, { name, password, confirmPassword, email, bits_id }, context, info) {
-            const user = new User({
-                name,
-                email,
-                password,
-                bits_id
-            })
+        async register(_, args) {
+            const user = new User({ ...args })
             await user.generateAuthToken()
             await user.save()
             return user
         },
-        async login(_, { email, password }, context, info) {
-            const user = await User.findOne({ email });
-            console.log(user)
-            if (!user) {
-                throw Error("Invalid email")
-            } else {
-                const match = await bcrypt.compare(password, user.password);
-                console.log(match)
-                if (!match)
-                    throw Error("Incorrect password");
-                else
-                    return user
-            }
+        async login(_, { email, password }) {
+            const user = await User.findByCredentials(email, password)
+            await user.generateAuthToken()
+            return user
         }
     }
 }

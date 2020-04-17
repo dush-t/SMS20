@@ -14,3 +14,8 @@ type Query {
     stock(_id: String, shortName: String): Stock
     stocks(market: String): [Stock]
 }
+
+type Mutation{
+    buy(sym:String!, units: Int!):Stock!
+    sell(sym:String!, units:Int!):Stock!
+}
