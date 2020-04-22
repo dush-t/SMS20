@@ -4,10 +4,14 @@ const Stock = require("../models/stock")
 // IEX Api
 const quote = async (stock) => {
     sym = stock.shortName
+    try{
     const quoteData = await iex.quote(sym);
     qd = quoteData
     stock.pricePerUnit = qd.latestPrice
     await stock.save()
+    }catch(e){
+        console.log(`Unable to fetch data for "${stock.name}"`)
+    }
 }
 
 
