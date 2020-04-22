@@ -17,14 +17,15 @@ leaderboardSchema.statics.update = async () => {
         path: "stocksOwned.stock",
         model: "Stock",
         select: "pricePerUnit"
-    })
+    })  
 
-    users.forEach(user => {
+    users.forEach(async user => {
         let stockPrice = 0
-        user.stocksOwned.forEach(stock => {
-            stockPrice = stockPrice + stock.units * stock.stock.pricePerUnit
+        user.stocksOwned.forEach(stockOwned => {
+            stockPrice = stockPrice + stockOwned.units * stockOwned.stock.pricePerUnit
         })
         user.netWorth = stockPrice + user.balance
+        await user.save
     })
     quickSort(users, 0, users.length - 1)
     const leaderboard = await Leaderboard.findOneAndUpdate({}, { leaderboard: users.reverse() })

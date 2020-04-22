@@ -22,9 +22,9 @@ const resolver = {
     },
 
     Mutation: {
-        async register(_, args) {
+        async signUp(_, args) {
             const user = new User({ ...args })
-            await user.generateAuthToken()
+            user.token = await user.generateAuthToken()
             await user.save()
             return user
         },
