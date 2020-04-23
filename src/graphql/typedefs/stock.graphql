@@ -19,3 +19,7 @@ type Mutation{
     buy(sym:String!, units: Int!):Stock!
     sell(sym:String!, units:Int!):Stock!
 }
+
+type Subscription{
+    stockUpdated:Stock!
+}

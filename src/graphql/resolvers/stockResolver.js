@@ -1,5 +1,6 @@
 const Market = require('../../models/market');
 const Stock = require('../../models/stock');
+const PubSub = require('../subscriptions');
 
 const schema = {
     Query: {
@@ -34,7 +35,13 @@ const schema = {
             await stock.sell(context.user, units)
             return stock
         }
-    }
+    },
+
+    Subscription: {
+        stockUpdated: {
+            subscribe: () => PubSub.asyncIterator("STOCK_UPDATED")
+        }
+    },
 }
 
 module.exports = schema

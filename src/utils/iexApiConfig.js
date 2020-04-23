@@ -1,15 +1,21 @@
-const iex = require('iexcloud_api_wrapper')
-const Stock = require("../models/stock")
+const iex = require('iexcloud_api_wrapper');
+const Stock = require("../models/stock");
+const PubSub = require("../graphql/subscriptions");
+
+
 
 // IEX Api
 const quote = async (stock) => {
     sym = stock.shortName
-    try{
-    const quoteData = await iex.quote(sym);
-    qd = quoteData
-    stock.pricePerUnit = qd.latestPrice
-    await stock.save()
-    }catch(e){
+    try {
+        const quoteData = await iex.quote(sym);
+        qd = quoteData
+        stock.pricePerUnit = qd.latestPrice
+        PubSub.publish('STOCK_UPDATED', {
+            stockUpdated: stock
+        });
+        await stock.save()
+    } catch (e) {
         console.log(`Unable to fetch data for "${stock.name}"`)
     }
 }
@@ -29,7 +35,7 @@ const noDelaySetInterval = async (func, interval) => {
 }
 
 // Interval(in ms) in which the stock market data is syncronised with the real data.
-const interval = process.env.INTERVAL || 60 * 60 * 1000
+const interval = process.env.INTERVAL || 2000
 
 module.exports = {
     fetch, noDelaySetInterval, interval

@@ -5,6 +5,10 @@ const AdminBroExpressjs = require('admin-bro-expressjs')
 const AdminBroMongoose = require('admin-bro-mongoose')
 const { ApolloServer, gql } = require('apollo-server-express')
 const { fetch, interval, noDelaySetInterval } = require("./utils/iexApiConfig")
+const dotEnv = require("dotenv");
+
+// Configure environment variables
+dotEnv.config();
 
 const buildDataloaders = require('./graphql/dataloaders')
 
@@ -51,12 +55,14 @@ const server = new ApolloServer({
     resolvers,
     introspection: true,
     playground: true,
-    context: ({ req }) => {
-        return {
-            user: req.user,
-            authenticated: req.authenticated,
-            dataloaders: buildDataloaders()
+    context: ({ req, connection }) => {
+        const contextObj = {};
+        if (req) {
+            contextObj.user = req.user;
+            contextObj.authenticated = req.authenticated;
         }
+        contextObj.dataloaders = buildDataloaders();
+        return contextObj;
     }
 });
 
@@ -68,4 +74,4 @@ app.use(auth);  // Doing stuff Django style
 
 server.graphqlPath = '/data'
 server.applyMiddleware({ app })
-module.exports = app;
+module.exports = { app, server };
