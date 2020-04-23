@@ -1,25 +1,25 @@
 type Stock {
-    _id: String!
-    name: String!
-    shortName: String
-    pricePerUnit: Float
-    initialPricePerUnit: Float
-    trend: Int
-    availableUnits: Int
-    isActive: Boolean
-    market: Market
+  _id: String!
+  name: String!
+  shortName: String
+  pricePerUnit: Float
+  initialPricePerUnit: Float
+  trend: Int
+  availableUnits: Int
+  isActive: Boolean
+  market: Market
 }
 
 type Query {
-    stock(_id: String, shortName: String): Stock
-    stocks(market: String): [Stock]
+  stock(_id: String, shortName: String): Stock
+  stocks(market: String): [Stock]
 }
 
-type Mutation{
-    buy(sym:String!, units: Int!):Stock!
-    sell(sym:String!, units:Int!):Stock!
+type Mutation {
+  buy(sym: String!, units: Int!): Stock!
+  sell(sym: String!, units: Int!): Stock!
 }
 
-type Subscription{
-    stockUpdated:Stock!
+type Subscription {
+  stockUpdated: Stock!
 }

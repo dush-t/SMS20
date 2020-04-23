@@ -1,8 +1,8 @@
 type Leaderboard {
-    _id:String!
-    leaderboard: [User]!
+  _id: String!
+  leaderboard: [User]!
 }
 
-type Query{
-    leaderboard:[Leaderboard]
+type Query {
+  leaderboard: [Leaderboard]
 }

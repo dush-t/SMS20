@@ -1,20 +1,24 @@
 type User {
-    _id: String!
-    name: String
-    email: String
-    bits_id: String
-    balance: Float
-    netWorth: Float
-    stocksOwned: [StockOwned]
-    stockTransactions: [StockTransaction]
-    token:String
+  _id: String!
+  name: String
+  email: String
+  bits_id: String
+  balance: Float
+  netWorth: Float
+  stocksOwned: [StockOwned]
+  stockTransactions: [StockTransaction]
 }
 
 type Query {
-    user(_id: String!): User
+  user(_id: String!): User
 }
 
-type Mutation{
-    signUp(name:String!,password:String!,bits_id:String!,email:String!):User!
-    login(email:String!,password:String!):User!
+type Mutation {
+  signUp(
+    name: String!
+    password: String!
+    bits_id: String!
+    email: String!
+  ): String!
+  login(email: String!, password: String!): String!
 }

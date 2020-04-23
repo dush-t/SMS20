@@ -1,39 +1,40 @@
-const User = require('../../models/user');
-const StockTransaction = require('../../models/stockTransaction');
-const bcrypt = require('bcryptjs');
+const User = require("../../models/user");
+const StockTransaction = require("../../models/stockTransaction");
+const bcrypt = require("bcryptjs");
 
 const resolver = {
-    Query: {
-        async user(_, args, { user }) {
-            if (!args._id) {
-                return user
-            }
-
-            user = await User.findById(args._id)
-            return user
-        }
+  Query: {
+    async user(_, args, { user }) {
+      if (!args._id) {
+        return user;
+      }
+      user = await User.findById(args._id);
+      return user;
     },
+  },
 
-    User: {
-        async stockTransactions(parent, args) {
-            const stockTransactions = await StockTransaction.find({ user: parent._id })
-            return stockTransactions
-        }
+  User: {
+    async stockTransactions(parent, args) {
+      const stockTransactions = await StockTransaction.find({
+        user: parent._id,
+      });
+      return stockTransactions;
     },
+  },
 
-    Mutation: {
-        async signUp(_, args) {
-            const user = new User({ ...args })
-            user.token = await user.generateAuthToken()
-            await user.save()
-            return user
-        },
-        async login(_, { email, password }) {
-            const user = await User.findByCredentials(email, password)
-            user.token = await user.generateAuthToken()
-            return user
-        }
-    }
-}
+  Mutation: {
+    async signUp(_, args) {
+      const user = new User({ ...args });
+      token = await user.generateAuthToken();
+      await user.save();
+      return token;
+    },
+    async login(_, { email, password }) {
+      const user = await User.findByCredentials(email, password);
+      token = await user.generateAuthToken();
+      return token;
+    },
+  },
+};
 
 module.exports = resolver;

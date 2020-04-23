@@ -1,9 +1,9 @@
 type StockOwned {
-    stock: String
-    units: Int
-    avgPricePerUnit: Float
+  stock: String
+  units: Int
+  avgPricePerUnit: Float
 }
 
 type Query {
-    stocksOwned: [StockOwned]
+  stocksOwned: [StockOwned]
 }
