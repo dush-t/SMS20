@@ -73,7 +73,7 @@ app.use(loggerMiddleware);
 app.use(auth);  // Doing stuff Django style
 
 app.use("/", (req, res, next) => {
-    res.send({ message: "Backend servers are up running!" })
+    res.send({ hailDevelopers: "Backend servers are up running!" })
 })
 
 server.graphqlPath = '/data'
