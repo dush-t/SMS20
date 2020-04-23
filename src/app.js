@@ -72,6 +72,10 @@ app.use(express.json())
 app.use(loggerMiddleware);
 app.use(auth);  // Doing stuff Django style
 
+app.use("/", (req, res, next) => {
+    res.send({ message: "Backend servers are up running!" })
+})
+
 server.graphqlPath = '/data'
 server.applyMiddleware({ app })
 module.exports = { app, server };
