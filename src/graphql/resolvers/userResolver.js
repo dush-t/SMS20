@@ -27,12 +27,12 @@ const resolver = {
       const user = new User({ ...args });
       token = await user.generateAuthToken();
       await user.save();
-      return token;
+      return { user, token };
     },
     async login(_, { email, password }) {
       const user = await User.findByCredentials(email, password);
       token = await user.generateAuthToken();
-      return token;
+      return { user, token };
     },
   },
 };
