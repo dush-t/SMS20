@@ -14,7 +14,7 @@
     "admin-bro": "^2.2.5",
     "admin-bro-expressjs": "^2.0.4",
     "admin-bro-mongoose": "^0.5.1",
-    "apollo-server": "^2.12.0",
+    "apollo-server": "^2.25.4",
     "apollo-server-express": "^2.12.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
